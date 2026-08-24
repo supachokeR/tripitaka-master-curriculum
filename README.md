@@ -6,7 +6,7 @@
 
 หลังเชื่อมโครงการนี้กับ GitHub Pages เว็บไซต์จะเผยแพร่จากสาขา `gh-pages` โดยเวิร์กโฟลว์ใน `.github/workflows/publish.yml` จะสร้างเว็บใหม่ทุกครั้งที่มีการส่งงานขึ้นสาขา `main`.
 
-ก่อนเผยแพร่ครั้งแรก ให้แก้ `site_url` ใน `mkdocs.yml` เป็น URL GitHub Pages จริงของโครงการ และเปิด GitHub Pages ให้ใช้สาขา `gh-pages`.
+เว็บไซต์เผยแพร่ที่ [supachoker.github.io/tripitaka-master-curriculum](https://supachoker.github.io/tripitaka-master-curriculum/) และระบบจะสร้างฉบับใหม่เมื่อมีการส่งงานขึ้นสาขา `main`.
 
 ## โครงสร้าง
 
