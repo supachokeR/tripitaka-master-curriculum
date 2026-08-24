@@ -1,0 +1,31 @@
+:root {
+  --md-text-font: "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+  --md-code-font: "Cascadia Code", Consolas, monospace;
+}
+
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #315c4d;
+  --md-primary-fg-color--light: #4d7b69;
+  --md-primary-fg-color--dark: #1f4035;
+  --md-accent-fg-color: #a65e2e;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #7ab69d;
+  --md-accent-fg-color: #efab6b;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  font-weight: 700;
+}
+
+.md-typeset blockquote {
+  border-inline-start-color: var(--md-accent-fg-color);
+}
+
+.md-typeset table:not([class]) {
+  display: table;
+  width: 100%;
+}

@@ -1,0 +1,45 @@
+site_name: พระไตรปิฎก Journey
+site_description: หลักสูตรอ่านพระไตรปิฎกบาลี 120 บทอย่างมีบริบท รอบคอบ และเกื้อกูลการลดทุกข์
+site_url: https://YOUR-GITHUB-USERNAME.github.io/tripitaka-master-curriculum/
+
+docs_dir: content
+use_directory_urls: true
+
+theme:
+  name: material
+  language: th
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search:
+      lang:
+        - th
+        - en
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  analytics: false
+
+copyright: >-
+  เนื้อหาหลักสูตรที่ผู้จัดทำสร้างขึ้น เผยแพร่ภายใต้ CC BY-NC-SA 4.0
