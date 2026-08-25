@@ -7,6 +7,138 @@ repo_name: supachokeR/tripitaka-master-curriculum
 docs_dir: content
 use_directory_urls: true
 
+nav:
+  - "เริ่มต้นเรียน": index.md
+  - "Phase 1 — พื้นฐาน":
+      - "บทที่ 1 — พระไตรปิฎกคืออะไร": phase-01-foundation/001-what-is-tipitaka.md
+      - "บทที่ 2 — คำสอนเดินทางมาถึงเราได้อย่างไร": phase-01-foundation/002-transmission.md
+      - "บทที่ 3 — เราจะพบพระพุทธเจ้าแบบไหนในพระไตรปิฎก": phase-01-foundation/003-buddha-as-teacher.md
+      - "บทที่ 4 — วิธีอ่านพระสูตร": phase-01-foundation/004-how-to-read-sutta.md
+      - "บทที่ 5 — แผนที่ใหญ่ของการปฏิบัติ": phase-01-foundation/005-sila-samadhi-panna.md
+      - "บทที่ 6 — อริยสัจ 4": phase-01-foundation/006-four-noble-truths.md
+      - "บทที่ 7 — เพราะสิ่งนี้มี สิ่งนี้จึงมี": phase-01-foundation/007-dependent-origination.md
+      - "บทที่ 8 — “ตัวเรา” อยู่ตรงไหน?": phase-01-foundation/008-five-aggregates.md
+      - "บทที่ 9 — โลกที่เราประสบเกิดขึ้นอย่างไร": phase-01-foundation/009-six-sense-bases.md
+      - "บทที่ 10 — ปลายทางของพระพุทธศาสนา": phase-01-foundation/010-nibbana.md
+  - "Phase 2 — พระวินัย":
+      - "บทที่ 11 — เมื่อพระสงฆ์ยังไม่มีกฎมากมาย": phase-02-vinaya/011-before-many-rules.md
+      - "บทที่ 12 — พระวินัยไม่ได้เริ่มต้นด้วยการลงโทษ": phase-02-vinaya/012-vinaya-not-punishment.md
+      - "บทที่ 13 — ปาติโมกข์คืออะไร": phase-02-vinaya/013-what-is-patimokkha.md
+      - "บทที่ 14 — ปาราชิก": phase-02-vinaya/014-parajika.md
+      - "บทที่ 15 — สังฆาทิเสส": phase-02-vinaya/015-sanghadisesa.md
+      - "บทที่ 16 — อนิยตและนิสสัคคิยปาจิตตีย์": phase-02-vinaya/016-aniyata-nissaggiya-pacittiya.md
+      - "บทที่ 17 — ปาจิตตีย์": phase-02-vinaya/017-pacittiya.md
+      - "บทที่ 18 — ปาฏิเทสนียะ เสขิยะ และมารยาทของสมณะ": phase-02-vinaya/018-patidesaniya-sekhiya.md
+      - "บทที่ 19 — การระงับอธิกรณ์": phase-02-vinaya/019-settling-legal-issues.md
+      - "บทที่ 20 — ภิกษุณีสงฆ์": phase-02-vinaya/020-bhikkhuni-sangha.md
+      - "บทที่ 21 — การบวช": phase-02-vinaya/021-ordination.md
+      - "บทที่ 22 — อุโบสถและการทบทวนตนเอง": phase-02-vinaya/022-uposatha-self-review.md
+      - "บทที่ 23 — จำพรรษา": phase-02-vinaya/023-rains-residence.md
+      - "บทที่ 24 — ปวารณา": phase-02-vinaya/024-pavarana.md
+      - "บทที่ 25 — กฐิน จีวร และปัจจัยสี่": phase-02-vinaya/025-kathina-robes-requisites.md
+      - "บทที่ 26 — อาหาร ยา และการดำรงชีวิต": phase-02-vinaya/026-food-medicine-livelihood.md
+      - "บทที่ 27 — สังฆกรรม": phase-02-vinaya/027-sanghakamma.md
+      - "บทที่ 28 — พระเทวทัตและความแตกแยก": phase-02-vinaya/028-devadatta-schism.md
+      - "บทที่ 29 — หลังพระพุทธเจ้าปรินิพพาน — พระวินัยกับการสังคายนาครั้งแรก": phase-02-vinaya/029-first-council.md
+      - "บทที่ 30 — พระวินัยให้อะไรกับคนที่ไม่ได้บวช": phase-02-vinaya/030-vinaya-for-laypeople.md
+  - "Phase 3 — ทีฆนิกาย":
+      - "บทที่ 31 — พรหมชาลสูตร | DN 1": phase-03-digha/031-brahmajala-sutta.md
+      - "บทที่ 32 — สามัญญผลสูตร | DN 2": phase-03-digha/032-samannaphala-sutta.md
+      - "บทที่ 33 — โปฏฐปาทสูตร | DN 9": phase-03-digha/033-potthapada-sutta.md
+      - "บทที่ 34 — เกวัฏฏสูตร | DN 11": phase-03-digha/034-kevaddha-sutta.md
+      - "บทที่ 35 — เตวิชชสูตร | DN 13": phase-03-digha/035-tevijja-sutta.md
+      - "บทที่ 36 — มหาปรินิพพานสูตร ตอนที่ 1 | DN 16": phase-03-digha/036-mahaparinibbana-sutta-part-1.md
+      - "บทที่ 37 — มหาปรินิพพานสูตร ตอนที่ 2 | DN 16": phase-03-digha/037-mahaparinibbana-sutta-part-2.md
+      - "บทที่ 38 — มหาสมัยสูตร | DN 20": phase-03-digha/038-mahasamaya-sutta.md
+      - "บทที่ 39 — สักกปัญหสูตร | DN 21": phase-03-digha/039-sakkapanha-sutta.md
+      - "บทที่ 40 — มหาสติปัฏฐานสูตร | DN 22": phase-03-digha/040-mahasatipatthana-sutta.md
+      - "บทที่ 41 — จักกวัตติสีหนาทสูตร | DN 26": phase-03-digha/041-cakkavatti-sihanada-sutta.md
+      - "บทที่ 42 — สิงคาลกสูตร | DN 31": phase-03-digha/042-sigalovada-sutta.md
+  - "Phase 4 — มัชฌิมนิกาย":
+      - "บทที่ 43 — มูลปริยายสูตร | MN 1": phase-04-majjhima/043-mulapariyaya-sutta.md
+      - "บทที่ 44 — สัพพาสวสูตร | MN 2": phase-04-majjhima/044-sabbasava-sutta.md
+      - "บทที่ 45 — สัมมาทิฏฐิสูตร | MN 9": phase-04-majjhima/045-sammaditthi-sutta.md
+      - "บทที่ 46 — สติปัฏฐานสูตร | MN 10": phase-04-majjhima/046-satipatthana-sutta.md
+      - "บทที่ 47 — มธุปิณฑิกสูตร | MN 18": phase-04-majjhima/047-madhupindika-sutta.md
+      - "บทที่ 48 — ทเวธาวิตักกสูตร | MN 19": phase-04-majjhima/048-dvedhavitakka-sutta.md
+      - "บทที่ 49 — วิตักกสัณฐานสูตร | MN 20": phase-04-majjhima/049-vitakkasanthana-sutta.md
+      - "บทที่ 50 — กกจูปมสูตร | MN 21": phase-04-majjhima/050-kakacupama-sutta.md
+      - "บทที่ 51 — อลคัททูปมสูตร | MN 22": phase-04-majjhima/051-alagaddupama-sutta.md
+      - "บทที่ 52 — อริยปริเยสนสูตร | MN 26": phase-04-majjhima/052-ariyapariyesana-sutta.md
+      - "บทที่ 53 — มหาหัตถิปโทปมสูตร | MN 28": phase-04-majjhima/053-mahahatthipadopama-sutta.md
+      - "บทที่ 54 — มหาสัจจกสูตร | MN 36": phase-04-majjhima/054-mahasaccaka-sutta.md
+      - "บทที่ 55 — มหาอัสสปุรสูตร | MN 39": phase-04-majjhima/055-maha-assapura-sutta.md
+      - "บทที่ 56 — จูฬเวทัลลสูตร | MN 44": phase-04-majjhima/056-cula-vedalla-sutta.md
+      - "บทที่ 57 — อัมพลัฏฐิกราหุโลวาทสูตร | MN 61": phase-04-majjhima/057-ambalatthika-rahulovada-sutta.md
+      - "บทที่ 58 — มหาราหุโลวาทสูตร | MN 62": phase-04-majjhima/058-maha-rahulovada-sutta.md
+      - "บทที่ 59 — องคุลิมาลสูตร | MN 86": phase-04-majjhima/059-angulimala-sutta.md
+      - "บทที่ 60 — อานาปานสติสูตร | MN 118": phase-04-majjhima/060-anapanasati-sutta.md
+  - "Phase 5 — สังยุตตนิกาย":
+      - "บทที่ 61 — วิธีอ่านสังยุตตนิกาย": phase-05-samyutta/061-how-to-read-samyutta.md
+      - "บทที่ 62 — เทวดาสังยุตต์ | SN 1": phase-05-samyutta/062-devata-samyutta.md
+      - "บทที่ 63 — มารสังยุตต์ | SN 4": phase-05-samyutta/063-mara-samyutta.md
+      - "บทที่ 64 — ภิกขุนีสังยุตต์ | SN 5": phase-05-samyutta/064-bhikkhuni-samyutta.md
+      - "บทที่ 65 — นิทานสังยุตต์ | SN 12": phase-05-samyutta/065-nidana-samyutta.md
+      - "บทที่ 66 — ขันธสังยุตต์ | SN 22": phase-05-samyutta/066-khandha-samyutta.md
+      - "บทที่ 67 — สฬายตนสังยุตต์ | SN 35": phase-05-samyutta/067-salayatana-samyutta.md
+      - "บทที่ 68 — เวทนาสังยุตต์ | SN 36": phase-05-samyutta/068-vedana-samyutta.md
+      - "บทที่ 69 — มัคคสังยุตต์ | SN 45": phase-05-samyutta/069-magga-samyutta.md
+      - "บทที่ 70 — โพชฌงคสังยุตต์ | SN 46": phase-05-samyutta/070-bojjhanga-samyutta.md
+      - "บทที่ 71 — สติปัฏฐานสังยุตต์ | SN 47": phase-05-samyutta/071-satipatthana-samyutta.md
+      - "บทที่ 72 — อินทรียสังยุตต์ | SN 48": phase-05-samyutta/072-indriya-samyutta.md
+      - "บทที่ 73 — อานาปานสติสังยุตต์ | SN 54": phase-05-samyutta/073-anapanasati-samyutta.md
+      - "บทที่ 74 — โสตาปัตติสังยุตต์ | SN 55": phase-05-samyutta/074-sotapatti-samyutta.md
+      - "บทที่ 75 — สัจจสังยุตต์ | SN 56": phase-05-samyutta/075-sacca-samyutta.md
+  - "Phase 6 — อังคุตตรนิกาย":
+      - "บทที่ 76 — ทำไมพระพุทธเจ้าจึงสอนเป็นตัวเลข": phase-06-anguttara/076-why-numbers.md
+      - "บทที่ 77 — ธรรมหมวด 1": phase-06-anguttara/077-onefold-dhammas.md
+      - "บทที่ 78 — ธรรมหมวด 2": phase-06-anguttara/078-twofold-dhammas.md
+      - "บทที่ 79 — ธรรมหมวด 3 และกาลามสูตร": phase-06-anguttara/079-threefold-dhammas-and-kalama.md
+      - "บทที่ 80 — ธรรมหมวด 4": phase-06-anguttara/080-fourfold-dhammas.md
+      - "บทที่ 81 — ธรรมหมวด 5": phase-06-anguttara/081-fivefold-dhammas.md
+      - "บทที่ 82 — ธรรมหมวด 6": phase-06-anguttara/082-sixfold-dhammas.md
+      - "บทที่ 83 — ธรรมหมวด 7": phase-06-anguttara/083-sevenfold-dhammas.md
+      - "บทที่ 84 — ธรรมหมวด 8: โลกธรรม 8": phase-06-anguttara/084-eight-worldly-conditions.md
+      - "บทที่ 85 — ธรรมหมวด 9": phase-06-anguttara/085-ninefold-dhammas.md
+      - "บทที่ 86 — ธรรมหมวด 10": phase-06-anguttara/086-tenfold-dhammas.md
+      - "บทที่ 87 — ธรรมหมวด 11": phase-06-anguttara/087-elevenfold-dhammas.md
+      - "บทที่ 88 — ธรรมะสำหรับครอบครัวและฆราวาส": phase-06-anguttara/088-householders-and-family.md
+      - "บทที่ 89 — ธรรมะสำหรับผู้นำ": phase-06-anguttara/089-leadership-dhamma.md
+      - "บทที่ 90 — จาก “ข้อธรรม” สู่การเปลี่ยนชีวิต": phase-06-anguttara/090-from-dhamma-lists-to-change.md
+  - "Phase 7 — ขุททกนิกาย":
+      - "บทที่ 91 — ขุททกปาฐะ": phase-07-khuddaka/091-khuddakapatha.md
+      - "บทที่ 92 — ธรรมบท": phase-07-khuddaka/092-dhammapada.md
+      - "บทที่ 93 — อุทาน": phase-07-khuddaka/093-udana.md
+      - "บทที่ 94 — อิติวุตตกะ": phase-07-khuddaka/094-itivuttaka.md
+      - "บทที่ 95 — สุตตนิบาต": phase-07-khuddaka/095-sutta-nipata.md
+      - "บทที่ 96 — วิมานวัตถุ": phase-07-khuddaka/096-vimanavatthu.md
+      - "บทที่ 97 — เปตวัตถุ": phase-07-khuddaka/097-petavatthu.md
+      - "บทที่ 98 — เถรคาถา": phase-07-khuddaka/098-theragatha.md
+      - "บทที่ 99 — เถรีคาถา": phase-07-khuddaka/099-therigatha.md
+      - "บทที่ 100 — ชาดก": phase-07-khuddaka/100-jataka.md
+      - "บทที่ 101 — นิทเทส": phase-07-khuddaka/101-niddesa.md
+      - "บทที่ 102 — ปฏิสัมภิทามรรค": phase-07-khuddaka/102-patisambhidamagga.md
+      - "บทที่ 103 — อปทาน": phase-07-khuddaka/103-apadana.md
+      - "บทที่ 104 — พุทธวงศ์": phase-07-khuddaka/104-buddhavamsa.md
+      - "บทที่ 105 — จริยาปิฎก": phase-07-khuddaka/105-cariyapitaka.md
+  - "Phase 8 — พระอภิธรรมปิฎก":
+      - "บทที่ 106 — ประตูสู่อภิธรรม": phase-08-abhidhamma/106-intro-to-abhidhamma.md
+      - "บทที่ 107 — ธัมมสังคณี ตอนที่ 1": phase-08-abhidhamma/107-dhammasangani-part-1.md
+      - "บทที่ 108 — ธัมมสังคณี ตอนที่ 2": phase-08-abhidhamma/108-dhammasangani-part-2.md
+      - "บทที่ 109 — วิภังค์ ตอนที่ 1": phase-08-abhidhamma/109-vibhanga-part-1.md
+      - "บทที่ 110 — วิภังค์ ตอนที่ 2": phase-08-abhidhamma/110-vibhanga-part-2.md
+      - "บทที่ 111 — ธาตุกถา": phase-08-abhidhamma/111-dhatukatha.md
+      - "บทที่ 112 — ปุคคลบัญญัติ": phase-08-abhidhamma/112-puggalapannatti.md
+      - "บทที่ 113 — กถาวัตถุ": phase-08-abhidhamma/113-kathavatthu.md
+      - "บทที่ 114 — ยมก": phase-08-abhidhamma/114-yamaka.md
+      - "บทที่ 115 — ปัฏฐาน ตอนที่ 1": phase-08-abhidhamma/115-patthana-part-1.md
+      - "บทที่ 116 — ปัฏฐาน ตอนที่ 2": phase-08-abhidhamma/116-patthana-part-2.md
+      - "บทที่ 117 — จากอภิธรรมกลับสู่ชีวิตจริง": phase-08-abhidhamma/117-abhidhamma-to-life.md
+  - "Phase 9 — บูรณาการและเรียนต่อ":
+      - "บทที่ 118 — พระไตรปิฎกทั้งสามพูดเรื่องเดียวกันอย่างไร": phase-09-integration/118-three-pitakas-one-path.md
+      - "บทที่ 119 — วิธีอ่านพระไตรปิฎกด้วยตนเอง": phase-09-integration/119-how-to-read-the-tripitaka.md
+      - "บทที่ 120 — กลับสู่คำถามแรก": phase-09-integration/120-back-to-the-first-question.md
+
 theme:
   name: material
   language: th
