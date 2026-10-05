@@ -96,6 +96,11 @@
   margin: 0;
 }
 
+::highlight(tripitaka-reader) {
+  background: color-mix(in srgb, var(--md-accent-fg-color) 38%, transparent);
+  color: inherit;
+}
+
 @media (max-width: 30em) {
   .reader-controls {
     align-items: stretch;

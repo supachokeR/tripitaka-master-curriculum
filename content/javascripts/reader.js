@@ -2,11 +2,13 @@
   "use strict";
 
   const readerState = {
-    chunks: [],
-    currentChunk: 0,
+    items: [],
+    nodeMap: [],
+    currentItem: 0,
     isReading: false,
     rate: 1,
     session: 0,
+    usesSelectionHighlight: false,
   };
 
   const rates = [1, 1.25, 1.5, 2];
@@ -20,32 +22,123 @@
     return value.replace(/\s+/g, " ").trim();
   }
 
-  function getArticleText(article) {
-    const copy = article.cloneNode(true);
-    copy.querySelectorAll(".reader-controls, script, style, noscript").forEach((node) => node.remove());
-    return normalizeText(copy.textContent || "");
-  }
-
-  function splitIntoChunks(text) {
-    const maxLength = 260;
-    const parts = text.match(/[^.!?…。！？]+[.!?…。！？]*|.+$/g) || [];
-    const chunks = [];
-    let chunk = "";
-
-    parts.forEach((part) => {
-      const sentence = normalizeText(part);
-      if (!sentence) return;
-
-      if (chunk && `${chunk} ${sentence}`.length > maxLength) {
-        chunks.push(chunk);
-        chunk = sentence;
-      } else {
-        chunk = chunk ? `${chunk} ${sentence}` : sentence;
-      }
+  function createNodeMap(article) {
+    const excludedSelector = ".reader-controls, script, style, noscript, pre, code";
+    const walker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        return node.parentElement && !node.parentElement.closest(excludedSelector)
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      },
     });
 
-    if (chunk) chunks.push(chunk);
-    return chunks;
+    const nodeMap = [];
+    let text = "";
+    let node;
+
+    while ((node = walker.nextNode())) {
+      const start = text.length;
+      text += node.data;
+      nodeMap.push({ node, start, end: text.length });
+    }
+
+    return { nodeMap, text };
+  }
+
+  function trimRange(text, start, end) {
+    while (start < end && /\s/.test(text[start])) start += 1;
+    while (end > start && /\s/.test(text[end - 1])) end -= 1;
+    return { start, end };
+  }
+
+  function addReadableRange(items, text, start, end) {
+    const maximumLength = 260;
+    let cursor = start;
+
+    while (cursor < end) {
+      let boundary = Math.min(end, cursor + maximumLength);
+      if (boundary < end) {
+        const whitespace = text.lastIndexOf(" ", boundary);
+        if (whitespace > cursor + 40) boundary = whitespace + 1;
+      }
+
+      const trimmed = trimRange(text, cursor, boundary);
+      const sentence = normalizeText(text.slice(trimmed.start, trimmed.end));
+      if (sentence) items.push({ ...trimmed, text: sentence });
+      cursor = boundary;
+    }
+  }
+
+  function createReadItems(article) {
+    const { nodeMap, text } = createNodeMap(article);
+    const items = [];
+    const sentences = text.matchAll(/[^.!?…。！？]+[.!?…。！？]*|.+$/g);
+
+    for (const match of sentences) {
+      const start = match.index;
+      const end = start + match[0].length;
+      const trimmed = trimRange(text, start, end);
+      if (trimmed.start < trimmed.end) addReadableRange(items, text, trimmed.start, trimmed.end);
+    }
+
+    readerState.nodeMap = nodeMap;
+    return items;
+  }
+
+  function locateTextPosition(position, isEnd) {
+    const entry = readerState.nodeMap.find(({ start, end }) => (
+      position >= start && (isEnd ? position <= end : position < end)
+    ));
+
+    if (!entry) return null;
+    return { node: entry.node, offset: position - entry.start };
+  }
+
+  function createRange(item) {
+    const start = locateTextPosition(item.start, false);
+    const end = locateTextPosition(item.end, true);
+    if (!start || !end) return null;
+
+    const range = document.createRange();
+    range.setStart(start.node, start.offset);
+    range.setEnd(end.node, end.offset);
+    return range;
+  }
+
+  function clearHighlight() {
+    if (window.CSS && CSS.highlights) CSS.highlights.delete("tripitaka-reader");
+
+    if (readerState.usesSelectionHighlight) {
+      window.getSelection()?.removeAllRanges();
+      readerState.usesSelectionHighlight = false;
+    }
+  }
+
+  function scrollToRange(range) {
+    const rect = range.getBoundingClientRect();
+    if (!rect || (rect.top >= 84 && rect.bottom <= window.innerHeight - 84)) return;
+
+    const element = range.startContainer.parentElement?.closest("p, li, blockquote, h1, h2, h3, h4, td, th")
+      || range.startContainer.parentElement;
+    element?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function highlightItem(item) {
+    const range = createRange(item);
+    if (!range) return;
+
+    clearHighlight();
+
+    if (window.Highlight && window.CSS && CSS.highlights) {
+      CSS.highlights.set("tripitaka-reader", new Highlight(range));
+    } else {
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      readerState.usesSelectionHighlight = true;
+    }
+
+    scrollToRange(range);
   }
 
   function setStatus(controls, message) {
@@ -92,14 +185,17 @@
   function speakNext(controls, session) {
     if (session !== readerState.session) return;
 
-    if (!readerState.isReading || readerState.currentChunk >= readerState.chunks.length) {
+    if (!readerState.isReading || readerState.currentItem >= readerState.items.length) {
       readerState.isReading = false;
       setToggleLabel(controls, false);
       setStatus(controls, "อ่านจบแล้ว");
+      clearHighlight();
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(readerState.chunks[readerState.currentChunk]);
+    const item = readerState.items[readerState.currentItem];
+    highlightItem(item);
+    const utterance = new SpeechSynthesisUtterance(item.text);
     utterance.lang = "th-TH";
     utterance.rate = readerState.rate;
 
@@ -108,7 +204,7 @@
 
     utterance.onend = function () {
       if (session !== readerState.session) return;
-      readerState.currentChunk += 1;
+      readerState.currentItem += 1;
       speakNext(controls, session);
     };
 
@@ -118,13 +214,14 @@
       readerState.isReading = false;
       setToggleLabel(controls, false);
       setStatus(controls, "ไม่สามารถอ่านออกเสียงได้ในขณะนี้");
+      clearHighlight();
     };
 
     window.speechSynthesis.speak(utterance);
   }
 
   function startReading(controls) {
-    if (!readerState.chunks.length) {
+    if (!readerState.items.length) {
       setStatus(controls, "ไม่พบข้อความสำหรับอ่าน");
       return;
     }
@@ -141,9 +238,10 @@
     readerState.session += 1;
     window.speechSynthesis.cancel();
     readerState.isReading = false;
-    readerState.currentChunk = 0;
+    readerState.currentItem = 0;
     setToggleLabel(controls, false);
     setStatus(controls, "หยุดอ่านแล้ว");
+    clearHighlight();
   }
 
   function createControls(article) {
@@ -160,14 +258,14 @@
     ].join("");
 
     article.insertBefore(controls, article.firstChild);
-    readerState.chunks = splitIntoChunks(getArticleText(article));
-    readerState.currentChunk = 0;
+    readerState.items = createReadItems(article);
+    readerState.currentItem = 0;
 
     controls.querySelector(".reader-controls__button").addEventListener("click", function () {
       if (readerState.isReading) {
         stopReading(controls);
       } else {
-        readerState.currentChunk = 0;
+        readerState.currentItem = 0;
         startReading(controls);
       }
     });
@@ -187,6 +285,7 @@
     readerState.session += 1;
     window.speechSynthesis.cancel();
     readerState.isReading = false;
+    clearHighlight();
 
     try {
       const savedRate = Number(window.localStorage.getItem(rateStorageKey));
