@@ -16,7 +16,7 @@
 
   const rates = [0.75, 1, 1.25, 1.5, 2];
   const rateStorageKey = "tripitaka-reader-clear-rate";
-  const voiceStorageKey = "tripitaka-reader-voice";
+  const voiceStorageKey = "tripitaka-reader-voice-kanya";
 
   function supportsSpeech() {
     return "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
@@ -196,6 +196,7 @@
   function selectThaiVoice() {
     const voices = thaiVoices();
     return voices.find((voice) => voice.voiceURI === readerState.voiceURI)
+      || voices.find((voice) => /kanya/i.test(voice.name))
       || voices.find((voice) => /google|premwadee|niwat/i.test(voice.name)) || voices[0];
   }
 
@@ -215,7 +216,6 @@
     select.disabled = false;
     voices.forEach((voice) => select.add(new Option(voice.name, voice.voiceURI)));
     const voice = selectThaiVoice();
-    readerState.voiceURI = voice.voiceURI;
     select.value = voice.voiceURI;
   }
 
