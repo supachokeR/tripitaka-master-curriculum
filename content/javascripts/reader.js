@@ -6,24 +6,28 @@
     nodeMap: [],
     currentItem: 0,
     isReading: false,
-    rate: 1,
+    rate: 0.75,
     session: 0,
     usesSelectionHighlight: false,
+    voiceURI: "",
+    timer: null,
+    waiting: false,
   };
 
-  const rates = [1, 1.25, 1.5, 2];
-  const rateStorageKey = "tripitaka-reader-rate";
+  const rates = [0.75, 1, 1.25, 1.5, 2];
+  const rateStorageKey = "tripitaka-reader-clear-rate";
+  const voiceStorageKey = "tripitaka-reader-voice";
 
   function supportsSpeech() {
     return "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
   }
 
   function normalizeText(value) {
-    return value.replace(/\s+/g, " ").trim();
+    return value.replace(/[\p{Extended_Pictographic}\uFE0F]/gu, "").replace(/\s+/g, " ").trim();
   }
 
   function createNodeMap(article) {
-    const excludedSelector = ".reader-controls, script, style, noscript, pre, code";
+    const excludedSelector = ".reader-controls, .headerlink, script, style, noscript, pre, code";
     const walker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
         return node.parentElement && !node.parentElement.closest(excludedSelector)
@@ -35,8 +39,12 @@
     const nodeMap = [];
     let text = "";
     let node;
+    let previousBlock;
 
     while ((node = walker.nextNode())) {
+      const block = node.parentElement.closest("p, li, h1, h2, h3, h4, h5, h6, td, th") || node.parentElement;
+      if (block !== previousBlock) text += "\n";
+      previousBlock = block;
       const start = text.length;
       text += node.data;
       nodeMap.push({ node, start, end: text.length });
@@ -52,19 +60,24 @@
   }
 
   function addReadableRange(items, text, start, end) {
-    const maximumLength = 260;
+    const maximumLength = 180;
+    const boundaries = typeof Intl.Segmenter === "function"
+      ? Array.from(new Intl.Segmenter("th", { granularity: "word" }).segment(text.slice(start, end)),
+        (part) => start + part.index + part.segment.length)
+      : Array.from(text.slice(start, end).matchAll(/\s+/g), (part) => start + part.index + part[0].length);
     let cursor = start;
 
     while (cursor < end) {
       let boundary = Math.min(end, cursor + maximumLength);
       if (boundary < end) {
-        const whitespace = text.lastIndexOf(" ", boundary);
-        if (whitespace > cursor + 40) boundary = whitespace + 1;
+        const safeBoundaries = boundaries.filter((position) => position > cursor && position <= boundary);
+        boundary = safeBoundaries.length ? safeBoundaries[safeBoundaries.length - 1]
+          : (boundaries.find((position) => position > boundary) || end);
       }
 
       const trimmed = trimRange(text, cursor, boundary);
       const sentence = normalizeText(text.slice(trimmed.start, trimmed.end));
-      if (sentence) items.push({ ...trimmed, text: sentence });
+      if (sentence) items.push({ ...trimmed, text: sentence, pause: boundary >= end ? 500 : 200 });
       cursor = boundary;
     }
   }
@@ -72,13 +85,15 @@
   function createReadItems(article) {
     const { nodeMap, text } = createNodeMap(article);
     const items = [];
-    const sentences = text.matchAll(/[^.!?…。！？]+[.!?…。！？]*|.+$/g);
-
-    for (const match of sentences) {
-      const start = match.index;
-      const end = start + match[0].length;
-      const trimmed = trimRange(text, start, end);
-      if (trimmed.start < trimmed.end) addReadableRange(items, text, trimmed.start, trimmed.end);
+    for (const block of text.matchAll(/[^\n]+/g)) {
+      const sentences = typeof Intl.Segmenter === "function"
+        ? new Intl.Segmenter("th", { granularity: "sentence" }).segment(block[0])
+        : [{ index: 0, segment: block[0] }];
+      for (const sentence of sentences) {
+        const start = block.index + sentence.index;
+        const trimmed = trimRange(text, start, start + sentence.segment.length);
+        if (trimmed.start < trimmed.end) addReadableRange(items, text, trimmed.start, trimmed.end);
+      }
     }
 
     readerState.nodeMap = nodeMap;
@@ -170,6 +185,7 @@
 
     if (readerState.isReading) {
       readerState.session += 1;
+      clearTimeout(readerState.timer);
       window.speechSynthesis.cancel();
       readerState.isReading = false;
       setToggleLabel(controls, false);
@@ -178,8 +194,29 @@
   }
 
   function selectThaiVoice() {
-    const voices = window.speechSynthesis.getVoices();
-    return voices.find((voice) => String(voice.lang).toLowerCase().startsWith("th"));
+    const voices = thaiVoices();
+    return voices.find((voice) => voice.voiceURI === readerState.voiceURI)
+      || voices.find((voice) => /google|premwadee|niwat/i.test(voice.name)) || voices[0];
+  }
+
+  function thaiVoices() {
+    return window.speechSynthesis.getVoices().filter((voice) => /^th(?:[-_]|$)/i.test(voice.lang));
+  }
+
+  function updateVoices(controls) {
+    const select = controls.querySelector(".reader-controls__voice");
+    const voices = thaiVoices();
+    select.replaceChildren();
+    if (!voices.length) {
+      select.add(new Option("ยังไม่พบเสียงภาษาไทย", ""));
+      select.disabled = true;
+      return;
+    }
+    select.disabled = false;
+    voices.forEach((voice) => select.add(new Option(voice.name, voice.voiceURI)));
+    const voice = selectThaiVoice();
+    readerState.voiceURI = voice.voiceURI;
+    select.value = voice.voiceURI;
   }
 
   function speakNext(controls, session) {
@@ -194,18 +231,20 @@
     }
 
     const item = readerState.items[readerState.currentItem];
-    highlightItem(item);
     const utterance = new SpeechSynthesisUtterance(item.text);
     utterance.lang = "th-TH";
     utterance.rate = readerState.rate;
 
     const voice = selectThaiVoice();
     if (voice) utterance.voice = voice;
+    utterance.onstart = function () {
+      if (session === readerState.session) highlightItem(item);
+    };
 
     utterance.onend = function () {
       if (session !== readerState.session) return;
       readerState.currentItem += 1;
-      speakNext(controls, session);
+      readerState.timer = setTimeout(() => speakNext(controls, session), item.pause / readerState.rate);
     };
 
     utterance.onerror = function (event) {
@@ -220,14 +259,42 @@
     window.speechSynthesis.speak(utterance);
   }
 
-  function startReading(controls) {
+  async function startReading(controls) {
+    const requestSession = ++readerState.session;
+    readerState.waiting = true;
+    setToggleLabel(controls, true);
+    if (!thaiVoices().length) {
+      setStatus(controls, "กำลังโหลดเสียงภาษาไทย…");
+      await new Promise((resolve) => {
+        const finish = () => {
+          clearTimeout(timeout);
+          window.speechSynthesis.removeEventListener("voiceschanged", changed);
+          resolve();
+        };
+        const changed = () => { if (thaiVoices().length) finish(); };
+        const timeout = setTimeout(finish, 2500);
+        window.speechSynthesis.addEventListener("voiceschanged", changed);
+        changed();
+      });
+    }
+    if (requestSession !== readerState.session) return;
+    readerState.waiting = false;
+    updateVoices(controls);
+    if (!selectThaiVoice()) {
+      setToggleLabel(controls, false);
+      setStatus(controls, "ไม่พบเสียงภาษาไทย กรุณาเพิ่มเสียงภาษาไทยในอุปกรณ์ หรือเปิดหน้านี้ด้วยเบราว์เซอร์ที่มีเสียงภาษาไทย");
+      return;
+    }
     if (!readerState.items.length) {
+      setToggleLabel(controls, false);
       setStatus(controls, "ไม่พบข้อความสำหรับอ่าน");
       return;
     }
 
     readerState.isReading = true;
     readerState.session += 1;
+    readerState.waiting = false;
+    clearTimeout(readerState.timer);
     const session = readerState.session;
     setToggleLabel(controls, true);
     setStatus(controls, `กำลังอ่านด้วยความเร็ว ${readerState.rate} เท่า`);
@@ -236,6 +303,8 @@
 
   function stopReading(controls) {
     readerState.session += 1;
+    readerState.waiting = false;
+    clearTimeout(readerState.timer);
     window.speechSynthesis.cancel();
     readerState.isReading = false;
     readerState.currentItem = 0;
@@ -254,6 +323,7 @@
       '<span class="reader-controls__label">ความเร็ว</span>',
       ...rates.map((rate) => `<button class="reader-controls__rate" type="button" data-rate="${rate}" aria-pressed="false">${rate}×</button>`),
       "</div>",
+      '<label class="reader-controls__voice-label">เสียงภาษาไทย <select class="reader-controls__voice" aria-label="เลือกเสียงภาษาไทย"></select></label>',
       '<p class="reader-controls__status" role="status">เลือกความเร็วแล้วกด “อ่านหน้านี้”</p>',
     ].join("");
 
@@ -262,13 +332,20 @@
     readerState.currentItem = 0;
 
     controls.querySelector(".reader-controls__button").addEventListener("click", function () {
-      if (readerState.isReading) {
+      if (readerState.isReading || readerState.waiting) {
         stopReading(controls);
       } else {
         readerState.currentItem = 0;
         startReading(controls);
       }
     });
+
+    controls.querySelector(".reader-controls__voice").addEventListener("change", function (event) {
+      readerState.voiceURI = event.target.value;
+      try { window.localStorage.setItem(voiceStorageKey, readerState.voiceURI); } catch (_) {}
+      if (readerState.isReading) setRate(controls, readerState.rate);
+    });
+    updateVoices(controls);
 
     controls.querySelectorAll(".reader-controls__rate").forEach((button) => {
       button.addEventListener("click", function () {
@@ -283,6 +360,8 @@
     if (!supportsSpeech()) return;
 
     readerState.session += 1;
+    readerState.waiting = false;
+    clearTimeout(readerState.timer);
     window.speechSynthesis.cancel();
     readerState.isReading = false;
     clearHighlight();
@@ -290,6 +369,7 @@
     try {
       const savedRate = Number(window.localStorage.getItem(rateStorageKey));
       if (rates.includes(savedRate)) readerState.rate = savedRate;
+      readerState.voiceURI = window.localStorage.getItem(voiceStorageKey) || "";
     } catch (_) {
       // Use the default speed when browser storage is unavailable.
     }
@@ -297,6 +377,11 @@
     const article = document.querySelector("article.md-content__inner");
     if (article && !article.querySelector(".reader-controls")) createControls(article);
   }
+
+  if (supportsSpeech()) window.speechSynthesis.addEventListener("voiceschanged", function () {
+    const controls = document.querySelector(".reader-controls");
+    if (controls) updateVoices(controls);
+  });
 
   if (typeof document$ !== "undefined") {
     document$.subscribe(mountReader);

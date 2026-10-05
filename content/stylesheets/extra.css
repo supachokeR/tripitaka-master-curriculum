@@ -96,6 +96,25 @@
   margin: 0;
 }
 
+.reader-controls__voice-label {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  max-width: 100%;
+}
+
+.reader-controls__voice {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-primary-fg-color);
+  border-radius: 0.35rem;
+  color: var(--md-default-fg-color);
+  font: inherit;
+  max-width: 100%;
+  padding: 0.4rem;
+}
+
 ::highlight(tripitaka-reader) {
   background: color-mix(in srgb, var(--md-accent-fg-color) 38%, transparent);
   color: inherit;
