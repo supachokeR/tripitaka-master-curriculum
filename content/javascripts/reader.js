@@ -16,7 +16,7 @@
 
   const rates = [0.75, 1, 1.25, 1.5, 2];
   const rateStorageKey = "tripitaka-reader-clear-rate";
-  const voiceStorageKey = "tripitaka-reader-voice-kanya";
+  const voiceStorageKey = "tripitaka-reader-female-voice";
 
   function supportsSpeech() {
     return "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
@@ -197,11 +197,13 @@
     const voices = thaiVoices();
     return voices.find((voice) => voice.voiceURI === readerState.voiceURI)
       || voices.find((voice) => /kanya/i.test(voice.name))
-      || voices.find((voice) => /google|premwadee|niwat/i.test(voice.name)) || voices[0];
+      || voices.find((voice) => /premwadee/i.test(voice.name)) || voices[0];
   }
 
   function thaiVoices() {
-    return window.speechSynthesis.getVoices().filter((voice) => /^th(?:[-_]|$)/i.test(voice.lang));
+    return window.speechSynthesis.getVoices().filter((voice) =>
+      /^th(?:[-_]|$)/i.test(voice.lang)
+      && /kanya|premwadee|achara|\bfemale\b/i.test(voice.name));
   }
 
   function updateVoices(controls) {
@@ -209,7 +211,7 @@
     const voices = thaiVoices();
     select.replaceChildren();
     if (!voices.length) {
-      select.add(new Option("ยังไม่พบเสียงภาษาไทย", ""));
+      select.add(new Option("ยังไม่พบเสียงผู้หญิงภาษาไทย", ""));
       select.disabled = true;
       return;
     }
@@ -264,7 +266,7 @@
     readerState.waiting = true;
     setToggleLabel(controls, true);
     if (!thaiVoices().length) {
-      setStatus(controls, "กำลังโหลดเสียงภาษาไทย…");
+      setStatus(controls, "กำลังโหลดเสียงผู้หญิงภาษาไทย…");
       await new Promise((resolve) => {
         const finish = () => {
           clearTimeout(timeout);
@@ -282,7 +284,7 @@
     updateVoices(controls);
     if (!selectThaiVoice()) {
       setToggleLabel(controls, false);
-      setStatus(controls, "ไม่พบเสียงภาษาไทย กรุณาเพิ่มเสียงภาษาไทยในอุปกรณ์ หรือเปิดหน้านี้ด้วยเบราว์เซอร์ที่มีเสียงภาษาไทย");
+      setStatus(controls, "ไม่พบเสียงผู้หญิงภาษาไทย กรุณาเพิ่มเสียง Kanya หรือ Premwadee ในอุปกรณ์ หรือเปิดด้วยเบราว์เซอร์ที่มีเสียงผู้หญิงภาษาไทย");
       return;
     }
     if (!readerState.items.length) {
@@ -323,7 +325,7 @@
       '<span class="reader-controls__label">ความเร็ว</span>',
       ...rates.map((rate) => `<button class="reader-controls__rate" type="button" data-rate="${rate}" aria-pressed="false">${rate}×</button>`),
       "</div>",
-      '<label class="reader-controls__voice-label">เสียงภาษาไทย <select class="reader-controls__voice" aria-label="เลือกเสียงภาษาไทย"></select></label>',
+      '<label class="reader-controls__voice-label">เสียงผู้หญิง (ภาษาไทย) <select class="reader-controls__voice" aria-label="เลือกเสียงผู้หญิงภาษาไทย"></select></label>',
       '<p class="reader-controls__status" role="status">เลือกความเร็วแล้วกด “อ่านหน้านี้”</p>',
     ].join("");
 
